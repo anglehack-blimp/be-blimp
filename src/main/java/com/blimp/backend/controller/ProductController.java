@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")  // Base path for product operations
+@RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -20,26 +20,26 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping  // Create a new product
+    @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
 
-    @PutMapping("/{id}")  // Update an existing product
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         Product updatedProduct = productService.updateProduct(id, product);
-        return ResponseEntity.ok(updatedProduct); 
+        return ResponseEntity.ok(updatedProduct);
     }
 
-    @DeleteMapping("/{id}")  // Delete a product
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
-   
-    @GetMapping // Get all products
-    public List<Product> getAllProducts(){
+
+    @GetMapping
+    public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 }
