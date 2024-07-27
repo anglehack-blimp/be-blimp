@@ -51,7 +51,7 @@ public class WebSecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(GET, "/api/v1/user/current").authenticated()
+                        auth.requestMatchers(POST, "/api/v1/user").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthenticationProvider())
