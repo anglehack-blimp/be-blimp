@@ -48,11 +48,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(POST, "/user").permitAll()
-                                .requestMatchers(POST, "/auth/login").permitAll()
-                                .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(auth -> auth.requestMatchers(POST, "/user").permitAll()
+                        .requestMatchers(POST, "/auth/login").permitAll()
+                        .anyRequest().authenticated())
                 .authenticationProvider(daoAuthenticationProvider())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
