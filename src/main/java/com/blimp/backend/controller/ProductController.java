@@ -1,13 +1,15 @@
 package com.blimp.backend.controller;
 
-import com.blimp.backend.entity.Product;
+import com.blimp.backend.dto.BlimpResponse;
+import com.blimp.backend.dto.CreateProductRequest;
+import com.blimp.backend.dto.ProductResponse;
+import com.blimp.backend.dto.ProductsResponse;
+import com.blimp.backend.dto.UpdateProductRequest;
 import com.blimp.backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -21,15 +23,18 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    public ResponseEntity<BlimpResponse<ProductResponse>> createProduct(@RequestBody CreateProductRequest requestBody) {
+        ProductResponse createProductResponse = productService.createProduct(requestBody);
+        BlimpResponse<ProductResponse> response = new BlimpResponse<>(createProductResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(id, product);
-        return ResponseEntity.ok(updatedProduct);
+    public ResponseEntity<BlimpResponse<ProductResponse>> updateProduct(@PathVariable Long id,
+            @RequestBody UpdateProductRequest requestBody) {
+        ProductResponse uppdateProductResponse = productService.updateProduct(id, requestBody);
+        BlimpResponse<ProductResponse> response = new BlimpResponse<>(uppdateProductResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")
@@ -39,7 +44,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<BlimpResponse<ProductsResponse>> getAllProducts() {
+        BlimpResponse<ProductsResponse> response = productService.getAllProducts();
+        return ResponseEntity.ok(response);
     }
 }

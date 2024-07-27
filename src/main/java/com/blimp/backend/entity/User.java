@@ -1,6 +1,8 @@
 package com.blimp.backend.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -18,6 +20,7 @@ public class User {
 
     private String password;
 
+    @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     @OneToMany(mappedBy = "user")
