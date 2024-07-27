@@ -48,10 +48,13 @@ public class ProductServiceImpl implements ProductService {
 
         // menyimpan file ke server directory
         String filename = generateUniqueFilename(file.getOriginalFilename());
-        Path filePath = Paths.get("directory/archive/", filename);
+        Path directoryPath = Paths.get("documents/archive/");
+        Path filePath = directoryPath.resolve(filename);
 
         // memastikan input file berhasil
+        // memastikan directory sudah tersedia
         try {
+            Files.createDirectories(directoryPath);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException("Error saving " + expectedType + " file: " + e.getMessage(), e);
