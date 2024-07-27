@@ -5,27 +5,26 @@ import com.blimp.backend.dto.CreateProductRequest;
 import com.blimp.backend.dto.ProductResponse;
 import com.blimp.backend.dto.ProductsResponse;
 import com.blimp.backend.dto.UpdateProductRequest;
+import com.blimp.backend.entity.User;
 import com.blimp.backend.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
-    @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
-
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<BlimpResponse<ProductResponse>> createProduct(@RequestBody CreateProductRequest requestBody) {
-        ProductResponse createProductResponse = productService.createProduct(requestBody);
-        BlimpResponse<ProductResponse> response = new BlimpResponse<>(createProductResponse);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<BlimpResponse<ProductResponse>> createProduct(@ModelAttribute CreateProductRequest requestBody, User user) {
+        var createProductResponse = productService.createProduct(requestBody, user);
+        var response = new BlimpResponse<>(createProductResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

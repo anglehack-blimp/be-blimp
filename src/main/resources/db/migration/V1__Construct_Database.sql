@@ -8,7 +8,7 @@ CREATE TABLE user
 
 CREATE TABLE products
 (
-    id          BIGINT       NOT NULL,
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
     name        VARCHAR(255) NOT NULL,
     description TEXT         NOT NULL,
     image       VARCHAR(255) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE products
 
 CREATE TABLE carts
 (
-    id         BIGINT                                   NOT NULL,
+    id         BIGINT                                   NOT NULL AUTO_INCREMENT,
     quantity   INT                                      NOT NULL,
     created_at TIMESTAMP                                NOT NULL,
     status     ENUM ('PENDING', 'ON_PROCESS', 'FINISH') NOT NULL,

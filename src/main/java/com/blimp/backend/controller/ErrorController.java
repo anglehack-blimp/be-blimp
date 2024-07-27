@@ -40,10 +40,4 @@ public class ErrorController {
         return new BlimpResponse<>(null, exception.getMessage());
     }
 
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public BlimpResponse<Object> defaultErrorHandler(Exception exception) {
-        return new BlimpResponse<>(null, exception.getMessage());
-    }
-
 }

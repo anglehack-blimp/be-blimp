@@ -1,168 +1,78 @@
 package com.blimp.backend.service.impl;
 
-import com.blimp.backend.dto.BlimpResponse;
-import com.blimp.backend.dto.CreateProductRequest;
-import com.blimp.backend.dto.ProductResponse;
-import com.blimp.backend.dto.ProductsResponse;
-import com.blimp.backend.dto.UpdateProductRequest;
+import com.blimp.backend.dto.*;
 import com.blimp.backend.entity.Product;
 import com.blimp.backend.entity.User;
-import com.blimp.backend.service.ProductService;
-
-import lombok.RequiredArgsConstructor;
-
 import com.blimp.backend.repository.ProductRepository;
-import com.blimp.backend.repository.UserRepository;
-
+import com.blimp.backend.service.ProductService;
+import com.blimp.backend.service.ValidationService;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
-    // @return mengembalikan filename
-    private String getUploadedFilename(MultipartFile file, String expectedType) {
+    private final ValidationService validationService;
 
-        // memerisksa ketersediaan file
-        if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException(expectedType + " file is required.");
-        }
 
-        // memastikan file path sudah sesuai
-        if (!isValidFileType(file, expectedType)) {
-            throw new IllegalArgumentException("Invalid file type. Please upload a valid " + expectedType + " file.");
-        }
+    @Override
+    public ProductResponse createProduct(CreateProductRequest request, User user) {
+        validationService.validate(request);
 
-        // menyimpan file ke server directory
-        String filename = generateUniqueFilename(file.getOriginalFilename());
-        Path directoryPath = Paths.get("documents/archive/");
-        Path filePath = directoryPath.resolve(filename);
+        var product = new Product();
+        product.setName(request.name());
+        product.setDescription(request.description());
+        product.setPrice(request.price());
+        product.setUser(user);
+        product.setQuantity(request.quantity());
+        product.setImage(documentSave(".", request.image()));
+        product.setVideo(documentSave(".", request.video()));
 
-        // memastikan input file berhasil
-        // memastikan directory sudah tersedia
-        try {
-            Files.createDirectories(directoryPath);
-            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException("Error saving " + expectedType + " file: " + e.getMessage(), e);
-        }
+        productRepository.save(product);
 
-        return filename;
+        return new ProductResponse(product.getId(), product.getName(), product.getDescription(), product.getImage(),
+                product.getVideo(), product.getPrice(), product.getQuantity());
     }
 
-    private String generateUniqueFilename(String originalFilename) {
-        String timestamp = String.valueOf(System.currentTimeMillis());
-        String extension = getFileExtension(originalFilename);
-        return timestamp + "-" + originalFilename.replace(extension, "") + extension;
-    }
+    @SneakyThrows
+    private String documentSave(String filePath, MultipartFile file) {
 
-    private String getFileExtension(String filename) {
-        int lastIndexOfDot = filename.lastIndexOf(".");
-        if (lastIndexOfDot == -1) {
-            return ""; // No extension
-        }
-        return filename.substring(lastIndexOfDot);
-    }
+        var uuid = UUID.randomUUID();
+        var path = Path.of(filePath);
+        var fullPath = path.resolve(uuid + "." + file.getOriginalFilename().split("\\.")[1]);
 
-    private boolean isValidFileType(MultipartFile file, String expectedType) {
-        String contentType = file.getContentType();
-        return switch (expectedType) {
-            case "image" -> contentType.startsWith("image/");
-            case "video" -> contentType.startsWith("video/");
-            default -> false;
-        };
+        if (!Files.exists(fullPath))
+            Files.createDirectories(path);
+
+        file.transferTo(fullPath);
+        return fullPath.toString();
     }
 
     @Override
-    public ProductResponse createProduct(CreateProductRequest product) {
-
-        // mengambil user sesuai dengan username
-        var row = new Product();
-        Optional<User> userOptional = userRepository.findByUsername("irvan");
-        User user = userOptional.orElseThrow(() -> new RuntimeException("User not found with username: irvan"));
-        row.setUser(user);
-
-        // mengisi informasi lainnya
-        row.setName(product.name());
-        row.setDescription(product.description());
-        row.setPrice(product.price());
-        row.setQuantity(product.quantity());
-
-        // mengisi gambar dan video dengan nama dari file yang diupload
-        row.setImage(getUploadedFilename(product.image(), "image"));
-        row.setVideo(getUploadedFilename(product.video(), "video"));
-
-        // menyimpan ke database
-        productRepository.save(row);
-
-        // menyiapkan response product
-        return new ProductResponse(
-                row.getId(),
-                row.getName(),
-                row.getDescription(),
-                row.getImage(),
-                row.getVideo(),
-                row.getPrice(),
-                row.getQuantity());
-    }
-
-    @Override
-    public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
-        Product row = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        // menyiapkan data product
-        row.setName(request.name());
-        row.setDescription(request.description());
-        row.setQuantity(request.quantity());
-
-        // mengisi gambar dan video dengan nama dari file yang diupload
-        row.setImage(getUploadedFilename(request.image(), "image"));
-        row.setVideo(getUploadedFilename(request.video(), "video"));
-
-        // menyimpan ke database
-        Product updatedProduct = productRepository.save(row);
-
-        return new ProductResponse(
-                updatedProduct.getId(),
-                updatedProduct.getName(),
-                updatedProduct.getDescription(),
-                updatedProduct.getImage(),
-                updatedProduct.getVideo(),
-                updatedProduct.getPrice(),
-                updatedProduct.getQuantity());
+    public ProductResponse updateProduct(Long id, UpdateProductRequest product) {
+        return null;
     }
 
     @Override
     public BlimpResponse<Boolean> deleteProduct(Long id) {
-        if (!productRepository.existsById(id)) {
-            return new BlimpResponse<>(false, "Product not found with ID: " + id);
-        }
-        try {
-            productRepository.deleteById(id);
-            return new BlimpResponse<>(true, "Product deleted successfully");
-        } catch (Exception e) {
-            return new BlimpResponse<>(false, "Error deleting product: " + e.getMessage());
-        }
+        return null;
     }
 
     @Override
     public BlimpResponse<ProductsResponse> getAllProducts() {
-        List<Product> products = productRepository.findAll();
+        var products = productRepository.findAll();
 
-        List<ProductResponse> productResponses = products.stream()
+        var productResponses = products.stream()
                 .map(product -> new ProductResponse(
                         product.getId(),
                         product.getName(),

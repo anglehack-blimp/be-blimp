@@ -4,6 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .cookie
+*.jpg
+*.jpeg
+*.png
+*.mp4
 
 ### STS ###
 .apt_generated

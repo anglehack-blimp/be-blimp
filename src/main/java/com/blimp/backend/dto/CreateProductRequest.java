@@ -8,9 +8,9 @@ public record CreateProductRequest(
 
                 @NotBlank String description,
 
-                @NotNull MultipartFile image,
+                 MultipartFile image,
 
-                @NotNull MultipartFile video,
+                 MultipartFile video,
 
                 @NotNull @Min(value = 0) Long price,
 
