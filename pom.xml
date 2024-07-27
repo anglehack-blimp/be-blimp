@@ -11,7 +11,6 @@
 	<groupId>com.blimp</groupId>
 	<artifactId>be-blimp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
 	<name>be-blimp</name>
 	<description>Project for anglehack. Blimp!</description>
 
