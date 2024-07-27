@@ -5,13 +5,12 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: root
+    password:
     url: jdbc:mysql://localhost:3306/blimp
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 10
       maximum-pool-size: 50
-
 
   jpa:
     open-in-view: true
