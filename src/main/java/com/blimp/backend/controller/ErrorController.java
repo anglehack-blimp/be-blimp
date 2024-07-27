@@ -14,13 +14,13 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class ErrorController {
 
-    @ExceptionHandler(ResponseStatusException.class)
+    @ExceptionHandler({ ResponseStatusException.class, Exception.class })
     public ResponseEntity<BlimpResponse<Object>> responseStatusException(ResponseStatusException exception) {
         return ResponseEntity.status(exception.getStatusCode())
                 .body(new BlimpResponse<>(null, exception.getReason()));
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler({ ConstraintViolationException.class, Exception.class })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BlimpResponse<Object> constraintViolationException(ConstraintViolationException exception) {
         return new BlimpResponse<>(null, exception.getMessage());
