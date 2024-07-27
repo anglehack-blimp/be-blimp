@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -59,13 +58,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse updateProduct(Long id, UpdateProductRequest product) {
-        return null;
+    public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
+        Product row = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // menyiapkan data product
+        row.setName(request.name());
+        row.setDescription(request.description());
+        row.setQuantity(request.quantity());
+
+        // mengisi gambar dan video dengan nama dari file yang diupload
+        row.setImage(documentSave(".", request.image()));
+        row.setVideo(documentSave(".", request.video()));
+
+        // menyimpan ke database
+        Product updatedProduct = productRepository.save(row);
+
+        return new ProductResponse(
+                updatedProduct.getId(),
+                updatedProduct.getName(),
+                updatedProduct.getDescription(),
+                updatedProduct.getImage(),
+                updatedProduct.getVideo(),
+                updatedProduct.getPrice(),
+                updatedProduct.getQuantity());
     }
 
     @Override
     public BlimpResponse<Boolean> deleteProduct(Long id) {
-        return null;
+        if (!productRepository.existsById(id)) {
+            return new BlimpResponse<>(false, "Product not found with ID: " + id);
+        }
+        try {
+            productRepository.deleteById(id);
+            return new BlimpResponse<>(true, "Product deleted successfully");
+        } catch (Exception e) {
+            return new BlimpResponse<>(false, "Error deleting product: " + e.getMessage());
+        }
     }
 
     @Override
