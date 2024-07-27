@@ -23,10 +23,10 @@ public class User implements UserDetails {
     private UserStatus status;
 
     @OneToMany(mappedBy = "user")
-    private List<Product> products;
+    private transient List<Product> products;
 
     @OneToMany(mappedBy = "user")
-    private List<Cart> carts;
+    private transient List<Cart> carts;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
