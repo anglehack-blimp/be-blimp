@@ -1,0 +1,44 @@
+@startuml
+
+left to right direction
+
+entity user {
+    * username : VARCHAR <<PK>>
+    --
+    * password : VARCHAR
+    * status : ENUM('ACTIVE', 'NON_ACTIVE')
+}
+
+entity products {
+    * id : BIGINT <<PK>>
+    --
+    * name : VARCHAR
+    * description : VARCHAR
+    * image : VARCHAR
+    video : VARCHAR
+    * price : BIGINT
+    * quantity : INT
+    --
+    username : VARCHAR <<FK>>
+}
+
+entity carts {
+    * id : BIGINT <<PK>>
+    --
+    * quantity : INT
+    * created_at : TIMESTAMP
+    * status : ENUM('PENDING', 'ON PROCESS', 'FINISH')
+    * username : VARCHAR <<PK>>
+}
+
+entity products_carts {
+    * cart_id : BIGINT <<PK>> <<FK>>
+    * product_id : BIGINT <<PK>> <<FK>>
+}
+
+user ||-left-o{ products
+products ||-left-|{ products_carts
+carts ||--|{ products_carts
+user ||--o{ carts
+
+@enduml
