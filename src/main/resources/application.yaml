@@ -1,6 +1,13 @@
 spring:
   application:
     name: be-blimp
+  servlet:
+    multipart:
+      file-size-threshold: 2KB
+      location: /tmp
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 200MB
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

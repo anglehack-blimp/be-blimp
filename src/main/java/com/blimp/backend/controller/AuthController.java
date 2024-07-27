@@ -16,11 +16,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping(
-            path = "/auth/login",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(path = "/auth/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public BlimpResponse<TokenResponse> login(@RequestBody LoginUserRequest request) {
         var jwtToken = authService.getLoginToken(request);
         return new BlimpResponse<>(new TokenResponse(jwtToken));

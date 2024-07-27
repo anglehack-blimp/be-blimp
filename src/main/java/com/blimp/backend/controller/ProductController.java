@@ -22,7 +22,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<BlimpResponse<ProductResponse>> createProduct(@RequestBody CreateProductRequest requestBody) {
         ProductResponse createProductResponse = productService.createProduct(requestBody);
         BlimpResponse<ProductResponse> response = new BlimpResponse<>(createProductResponse);
@@ -38,9 +38,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+    public BlimpResponse<Boolean> deleteProduct(@PathVariable Long id) {
+        return productService.deleteProduct(id);
     }
 
     @GetMapping

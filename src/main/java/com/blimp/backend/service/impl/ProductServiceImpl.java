@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import com.blimp.backend.repository.ProductRepository;
 import com.blimp.backend.repository.UserRepository;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -148,11 +147,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public BlimpResponse<Boolean> deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            return new BlimpResponse<>(false, "Product not found with ID: " + id);
+        }
         try {
             productRepository.deleteById(id);
-            return new BlimpResponse<>(true);
-        } catch (EmptyResultDataAccessException e) {
-            return new BlimpResponse<>(false, "Product not found with ID: " + id);
+            return new BlimpResponse<>(true, "Product deleted successfully");
         } catch (Exception e) {
             return new BlimpResponse<>(false, "Error deleting product: " + e.getMessage());
         }
