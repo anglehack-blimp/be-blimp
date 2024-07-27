@@ -11,7 +11,7 @@ public interface ProductService {
 
     ProductResponse updateProduct(Long id, UpdateProductRequest product);
 
-    void deleteProduct(Long id);
+    BlimpResponse<Boolean> deleteProduct(Long id);
 
     BlimpResponse<ProductsResponse> getAllProducts();
 
