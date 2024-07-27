@@ -18,18 +18,14 @@ public class Cart {
 
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
     private CartStatus status;
 
     @ManyToOne
     @JoinColumn(name = "username", referencedColumnName = "username")
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "products_carts",
-            joinColumns = @JoinColumn(name = "cart_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id")
-    )
-    private List<Product> products;
+    @OneToMany(mappedBy = "productCartKey.cart")
+    private List<ProductCart> productCarts;
 
 }

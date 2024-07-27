@@ -25,20 +25,20 @@ entity products {
 entity carts {
     * id : BIGINT <<PK>>
     --
-    * quantity : INT
     * created_at : TIMESTAMP
     * status : ENUM('PENDING', 'ON PROCESS', 'FINISH')
     * username : VARCHAR <<PK>>
 }
 
-entity products_carts {
+entity product_cart {
     * cart_id : BIGINT <<PK>> <<FK>>
     * product_id : BIGINT <<PK>> <<FK>>
+    * quantity : INT
 }
 
 user ||-left-o{ products
-products ||-left-|{ products_carts
-carts ||--|{ products_carts
+products ||-left-|{ product_cart
+carts ||--|{ product_cart
 user ||--o{ carts
 
 @enduml

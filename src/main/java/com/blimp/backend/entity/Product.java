@@ -38,6 +38,6 @@ public class Product {
     @NotNull
     private User user;
 
-    @ManyToMany(mappedBy = "products")
-    private List<Cart> carts;
+    @OneToMany(mappedBy = "productCartKey.product")
+    private List<ProductCart> productCarts;
 }
