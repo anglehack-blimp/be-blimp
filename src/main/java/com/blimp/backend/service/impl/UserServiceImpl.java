@@ -1,6 +1,7 @@
 package com.blimp.backend.service.impl;
 
 import com.blimp.backend.dto.RegisterUserRequest;
+import com.blimp.backend.dto.UserResponse;
 import com.blimp.backend.entity.User;
 import com.blimp.backend.entity.UserRole;
 import com.blimp.backend.entity.UserStatus;
@@ -51,5 +52,10 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         log.info("new user created with username = '{}'", user.getUsername());
+    }
+
+    @Override
+    public UserResponse get(User user) {
+        return new UserResponse(user.getUsername());
     }
 }
