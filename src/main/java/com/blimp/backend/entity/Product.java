@@ -20,7 +20,7 @@ public class Product {
     private String name;
 
     @NotBlank(message = "Product description is required")
-    private String description; // TEXT field in database
+    private String description;
 
     @NotBlank(message = "Product image is required")
     @Size(max = 255, message = "Product image URL must not exceed 255 characters")
