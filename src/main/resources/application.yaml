@@ -12,7 +12,6 @@ spring:
       minimum-idle: 10
       maximum-pool-size: 50
 
-
   jpa:
     open-in-view: true
 
@@ -20,3 +19,8 @@ server:
   port: 8081
   servlet:
     context-path: /api/v1
+
+app:
+  jwt:
+    secret: IrvanPutraNaufalBryanBlimpAnglehackIrvanPutraNaufalBryanBlimpAnglehackIrvanPutraNaufalBryanBlimpAnglehackIrvanPutraNaufalBryanBlimpAnglehack
+    expirationMs: 86400000

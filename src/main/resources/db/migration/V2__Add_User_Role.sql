@@ -1,0 +1,2 @@
+ALTER TABLE user
+    ADD COLUMN role ENUM ('SELLER', 'BUYER') NOT NULL;
