@@ -16,7 +16,7 @@ public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping()
+    @PostMapping("/cart")
     public BlimpResponse<CartResponse> addToCart(@RequestBody CartRequest request, User user) {
         var response = cartService.addToCart(request, user);
         return new BlimpResponse<>(response);

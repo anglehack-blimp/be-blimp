@@ -18,10 +18,38 @@ import java.nio.file.Path;
 public class DocumentController {
 
     @GetMapping(
-            path = "/file",
-            produces = {"video/mp4", MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE}
+            path = "/image",
+            produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, "image/jpg"}
     )
-    public byte[] getOrDownload(
+    public byte[] getImage(
+            @RequestParam String directory,
+            @RequestParam(
+                    name = "download",
+                    defaultValue = "false",
+                    required = false
+            )
+            boolean wantToDownload,
+            HttpServletResponse response
+    ) {
+        var filePath = Path.of(directory);
+        try {
+            if (wantToDownload) {
+                response.setHeader(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"%s\"".formatted(filePath.getFileName())
+                );
+            }
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "'%s' is not found".formatted(directory));
+        }
+    }
+
+    @GetMapping(
+            path = "/video",
+            produces = "video/mp4"
+    )
+    public byte[] getVideo(
             @RequestParam String directory,
             @RequestParam(
                     name = "download",
