@@ -38,11 +38,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
-        BlimpResponse<Boolean> response = productService.deleteProduct(id);
-        Boolean deleted = response.data();
-        return (deleted) ? ResponseEntity.noContent().build()
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product with ID " + id + " not found.");
+    public BlimpResponse<Boolean> deleteProduct(@PathVariable Long id) {
+        return productService.deleteProduct(id);
     }
 
     @GetMapping
