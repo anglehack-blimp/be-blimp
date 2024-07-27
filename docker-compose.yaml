@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+
+  blimp-database:
+    container_name: blimp-database
+    image: mysql:8.3.0
+    environment:
+      MYSQL_ROOT_PASSWORD: admin_root_password_blimp
+      MYSQL_DATABASE: blimp
+      MYSQL_USER: blimp
+      MYSQL_PASSWORD: blimp-anglehack
+    volumes:
+      - "blimp-data:/var/lib/mysql"
+
+  blimp:
+    container_name: blimp
+    image: mhmmdnaufal/blimp:1.0.0
+    ports:
+      - "80:8080"
+    environment:
+      DATABASE_USERNAME: blimp
+      DATABASE_PASSWORD: blimp-anglehack
+      DATABASE_URL: jdbc:mysql://blimp-database:3306/blimp
+      APP_PORT: 8080
+    depends_on:
+      - blimp-database
+    volumes:
+      - "blimp-documents:/application/documents"
+
+volumes:
+  blimp-documents:
+    name: blimp-documents
+  blimp-data:
+    name: blimp-data
+
