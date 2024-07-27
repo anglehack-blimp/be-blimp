@@ -22,7 +22,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<BlimpResponse<ProductResponse>> createProduct(@RequestBody CreateProductRequest requestBody) {
         ProductResponse createProductResponse = productService.createProduct(requestBody);
         BlimpResponse<ProductResponse> response = new BlimpResponse<>(createProductResponse);
