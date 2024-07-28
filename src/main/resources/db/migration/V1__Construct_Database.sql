@@ -26,10 +26,8 @@ CREATE TABLE carts
     quantity   INT                                      NOT NULL,
     created_at TIMESTAMP                                NOT NULL,
     status     ENUM ('PENDING', 'ON_PROCESS', 'FINISH') NOT NULL,
-    product_id BIGINT                                   NOT NULL,
     username   VARCHAR(20)                              NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT fk_carts_user FOREIGN KEY (username) REFERENCES user (username)
+    PRIMARY KEY (id)
 ) ENGINE = InnoDB;
 
 

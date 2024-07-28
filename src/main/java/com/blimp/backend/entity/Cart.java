@@ -15,8 +15,6 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer quntity;
-
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)

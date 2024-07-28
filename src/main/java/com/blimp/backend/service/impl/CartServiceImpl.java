@@ -1,7 +1,6 @@
 package com.blimp.backend.service.impl;
 
 import com.blimp.backend.dto.CartRequest;
-import com.blimp.backend.dto.ProductCartRequest;
 import com.blimp.backend.dto.CartResponse;
 import com.blimp.backend.dto.ProductCartResponse;
 import com.blimp.backend.entity.*;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,17 +28,20 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartResponse addToCart(CartRequest request, User user) {
+        var cart = new Cart();
+        cart.setCreatedAt(LocalDateTime.now());
+        cart.setUser(user);
+        cart.setStatus(CartStatus.PENDING);
+        cartRepository.save(cart);
+
         var productCarts = new ArrayList<ProductCart>();
         for (var productCartRequest : request.cartList()) {
-            var product = productRepository.findByName(productCartRequest.productName()).orElseThrow();
-            var cart = new Cart();
-            cart.setCreatedAt(LocalDateTime.now());
-            cart.setUser(user);
-            cart.setStatus(CartStatus.PENDING);
+            var product = productRepository.findFirstByName(productCartRequest.productName()).orElseThrow();
+            product.setQuantity(product.getQuantity() - productCartRequest.quantity());
 
             var productCartKey = new ProductCartKey();
             productCartKey.setProduct(productRepository.save(product));
-            productCartKey.setCart(cartRepository.save(cart));
+            productCartKey.setCart(cart);
 
             var productCart = new ProductCart();
             productCart.setProductCartKey(productCartKey);
@@ -56,7 +57,7 @@ public class CartServiceImpl implements CartService {
                         new ProductCartResponse(
                                 productCart.getProductCartKey().getProduct().getName(),
                                 productCart.getQuantity()))
-                        .collect(Collectors.toList())
+                        .toList()
         );
     }
 }
