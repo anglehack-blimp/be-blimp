@@ -8,15 +8,18 @@ import com.blimp.backend.service.ProductService;
 import com.blimp.backend.service.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
+@Slf4j @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
@@ -58,9 +61,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse updateProduct(Long id, UpdateProductRequest request) {
+    public ProductResponse updateProduct(Long id, UpdateProductRequest request, User user) {
         Product row = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        checkProductUser(row, user);
 
         // menyiapkan data product
         row.setName(request.name());
@@ -82,6 +87,13 @@ public class ProductServiceImpl implements ProductService {
                 updatedProduct.getVideo(),
                 updatedProduct.getPrice(),
                 updatedProduct.getQuantity());
+    }
+
+    private void checkProductUser(Product product, User user) {
+        if (!user.equals(product.getUser())) {
+            log.warn("'{}' tries to modify '{}' article", user.getUsername(), product.getUser().getUsername());
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this product belongs to someone else");
+        }
     }
 
     @Override

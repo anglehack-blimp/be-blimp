@@ -10,7 +10,7 @@ import com.blimp.backend.entity.User;
 public interface ProductService {
     ProductResponse createProduct(CreateProductRequest request, User user);
 
-    ProductResponse updateProduct(Long id, UpdateProductRequest product);
+    ProductResponse updateProduct(Long id, UpdateProductRequest product, User user);
 
     BlimpResponse<Boolean> deleteProduct(Long id);
 

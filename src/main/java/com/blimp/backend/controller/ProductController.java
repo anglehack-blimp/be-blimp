@@ -28,11 +28,16 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(
+            path = "/{id}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ResponseEntity<BlimpResponse<ProductResponse>> updateProduct(@PathVariable Long id,
-            @RequestBody UpdateProductRequest requestBody) {
-        ProductResponse uppdateProductResponse = productService.updateProduct(id, requestBody);
-        BlimpResponse<ProductResponse> response = new BlimpResponse<>(uppdateProductResponse);
+                                                                        @ModelAttribute UpdateProductRequest requestBody,
+                                                                        User user) {
+
+        var uppdateProductResponse = productService.updateProduct(id, requestBody, user);
+        var response = new BlimpResponse<>(uppdateProductResponse);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
